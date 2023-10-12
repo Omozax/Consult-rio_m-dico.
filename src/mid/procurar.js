@@ -1,9 +1,13 @@
-function procurar(elemento, bancoDeDados) {
+function procurar(elemento, bancoDeDados, propriedade) {
   for (const chave in bancoDeDados) {
-    if (bancoDeDados[chave] === elemento) {
+    if (!propriedade) {
+      if (bancoDeDados[chave] === elemento) {
+        return bancoDeDados[chave];
+      }
+    } else if (bancoDeDados[chave][propriedade] === elemento) {
       return bancoDeDados[chave];
     } else if (typeof bancoDeDados[chave] === "object") {
-      const resultado = procurar(elemento, bancoDeDados[chave]);
+      const resultado = procurar(elemento, bancoDeDados[chave], propriedade);
       if (resultado) {
         return resultado;
       }
@@ -11,3 +15,5 @@ function procurar(elemento, bancoDeDados) {
   }
   return null;
 }
+
+module.exports = procurar;

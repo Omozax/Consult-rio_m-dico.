@@ -1,35 +1,27 @@
 const { laudos, consultas } = require("../bancodedados");
+const procurar = require("./procurar");
 
 const LogPaciente = (req) => {
-  const { nome, cpf, dataNascimento, celular, email, senha } = req.body;
-  if (!nome || !cpf || !dataNascimento || !celular || !email || !senha) {
+  console.log("logPaciente/1");
+  const { nome, cpf, dataNascimento, celular, email, senha } = req;
+
+  if (nome && cpf && dataNascimento && celular && email && senha) {
+    const paciente = req.body;
+    console.log("logPaciente/2");
+    return paciente;
+  } else {
     return null;
   }
-
-  const paciente = {
-    nome: nome,
-    cpf: cpf,
-    dataNascimento: dataNascimento,
-    celular: celular,
-    email: email,
-    senha: senha,
-  };
-
-  return paciente;
-  next();
 };
 
 const logLaudo = (req) => {
   const { identificadorConsulta, textoMedico } = req.body;
 
   if (identificadorConsulta && textoMedico) {
-    const consultaEncontrada = procurar(
-      identificadorConsulta,
-      consultas.identificadorConsulta
-    );
+    const consultaEncontrada = procurar(identificadorConsulta, consultas);
     const medicoID = procurar(
-      identificadorMedico,
-      consultaEncontrada.identificadorMedico
+      consultaEncontrada.identificadorMedico,
+      consultas
     );
   }
 
@@ -43,4 +35,9 @@ const logLaudo = (req) => {
     paciente: consultaEncontrada.paciente,
   };
   return laudo;
+};
+
+module.exports = {
+  logLaudo,
+  LogPaciente,
 };

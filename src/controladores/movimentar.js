@@ -4,17 +4,23 @@ const {
   laudos,
   consultorio,
 } = require("../bancodedados");
-const { LogPaciente, loglaudos } = require("./listar");
+const { LogPaciente } = require("../mid/log");
+const procurar = require("../mid/procurar");
+
 const fs = require("fs");
 const path = require("path");
 
 //////////////////////////////////////////////////
 const criarConsulta = async (req, res) => {
   const { tipoConsulta, valorConsulta, cpf } = req.body;
+  const paciente = LogPaciente(req.body);
 
   if (tipoConsulta && valorConsulta && typeof valorConsulta === "number") {
-    const medicoDisponivel = consultorio.medicos.find(
-      (medico) => medico.especialidade === tipoConsulta
+    console.log("criarconta/1");
+    const medicoDisponivel = procurar(
+      tipoConsulta,
+      consultorio.medicos,
+      "especialidade"
     );
 
     if (medicoDisponivel) {
@@ -28,13 +34,15 @@ const criarConsulta = async (req, res) => {
           tipoConsulta,
           valorConsulta,
           identificadorMedico: medicoDisponivel.identificador,
-          paciente: LogPaciente(req.body),
+          paciente: LogPaciente(req),
           finalizada: false,
         };
-
+        console.log(novaConsulta);
         consultas.push(novaConsulta);
 
-        return res.status(201);
+        return res
+          .status(201)
+          .json({ mensagem: "Consulta criada com sucesso" });
       } else {
         return res.status(400).json({
           mensagem: "Já existe uma consulta em andamento com o CPF informado!",
@@ -49,6 +57,7 @@ const criarConsulta = async (req, res) => {
   } else {
     return res.status(400).json({ mensagem: "Dados de consulta inválidos" });
   }
+  console.log("controlador/criarconta2");
 };
 
 //////////////////////////////////////////////////
@@ -123,11 +132,8 @@ const finalizarConsulta = async (req, res) => {
     return res.status(400).json({ mensagem: "Dados obrigatórios faltando" });
   }
 
-  const consultaEncontrada = procurar(
-    identificadorConsulta,
-    consultas.identificadorConsulta
-  );
-  if (!consultaEncontrada) {
+  const consultaEncontrada = procurar(identificadorConsulta, consultas);
+  if (consultaEncontrada === null) {
     return res.status(400).json({ mensagem: "Consulta não encontrada" });
   }
 
@@ -135,7 +141,7 @@ const finalizarConsulta = async (req, res) => {
     identificadorConsulta,
     consultasFinalizadas
   );
-  if (consultaFinalizada) {
+  if (consultaFinalizada !== null) {
     return res.status(400).json({ mensagem: "A consulta já está finalizada" });
   }
 
@@ -145,20 +151,11 @@ const finalizarConsulta = async (req, res) => {
     });
   }
 
-  const medicoEspecializado = procurar(
-    consultaEncontrada.tipoConsulta,
-    consultorio.medicos
-  );
-
-  if (!medicoEspecializado) {
-    return res.status(400).json({ mensagem: "Especialidade médica inválida" });
-  }
-
   const consulta_Finalizada = {
     identificadorConsulta: consultasFinalizadas.length + 1,
     tipoConsulta: consultaEncontrada.tipoConsulta,
     valorConsulta: consultaEncontrada.valorConsulta,
-    identificadorMedico: medicoEspecializado.identificador,
+    identificadorMedico: consultaEncontrada.identificadorMedico,
     paciente: consultaEncontrada.paciente,
     finalizada: true,
     identificadorLaudo: laudos.length + 1,
@@ -168,15 +165,15 @@ const finalizarConsulta = async (req, res) => {
 
   const laudo = {
     identificador: laudos.length + 1,
-    identificadorConsulta: identificadorConsulta,
-    identificadorMedico: medicoEspecializado.identificador,
+    identificadorConsulta,
+    identificadorMedico: consultaEncontrada.identificadorMedico,
     textoMedico,
     paciente: consultaEncontrada.paciente,
   };
 
   laudos.push(laudo);
 
-  res.status(201).json(consultaFinalizada);
+  res.status(201).json(consulta_Finalizada);
 };
 
 module.exports = {
