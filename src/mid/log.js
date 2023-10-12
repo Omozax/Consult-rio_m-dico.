@@ -1,4 +1,4 @@
-const { laudos } = require("../bancodedados");
+const { laudos, consultas } = require("../bancodedados");
 
 const LogPaciente = (req) => {
   const { nome, cpf, dataNascimento, celular, email, senha } = req.body;
@@ -19,22 +19,28 @@ const LogPaciente = (req) => {
   next();
 };
 
-const loglaudo = (req) => {
+const logLaudo = (req) => {
   const { identificadorConsulta, textoMedico } = req.body;
-  if (!identificadorConsulta || !textoMedico) {
-    return null;
+
+  if (identificadorConsulta && textoMedico) {
+    const consultaEncontrada = procurar(
+      identificadorConsulta,
+      consultas.identificadorConsulta
+    );
+    const medicoID = procurar(
+      identificadorMedico,
+      consultaEncontrada.identificadorMedico
+    );
   }
 
   const laudo = {
     identificador: laudos.length + 1,
-    especialidade: verificar_especialidade(),
-    identificadorConsulta: identificadorConsulta,
-    identificadorMedico: identificadorMedico,
+    especialidade: medicoID.especialidade,
+    identificadorConsulta,
+    identificadorMedico: medicoID,
     finalizada: true,
-    textoMedico: textoMedico,
-    paciente: paciente,
+    textoMedico,
+    paciente: consultaEncontrada.paciente,
   };
-  laudos.push(laudo);
   return laudo;
-  next();
 };

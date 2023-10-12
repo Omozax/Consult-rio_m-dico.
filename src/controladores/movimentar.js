@@ -24,7 +24,7 @@ const criarConsulta = async (req, res) => {
         )
       ) {
         const novaConsulta = {
-          identificador: consultas.length + 1,
+          identificadorConsulta: consultas.length + 1,
           tipoConsulta,
           valorConsulta,
           identificadorMedico: medicoDisponivel.identificador,
@@ -53,8 +53,8 @@ const criarConsulta = async (req, res) => {
 
 //////////////////////////////////////////////////
 const atualizarConsulta = async (req, res) => {
-  const { identificador } = req.query;
-  const id = procurar(identificador, consultas);
+  const { identificadorConsulta } = req.query;
+  const id = procurar(identificadorConsulta, consultas.identificadorConsulta);
 
   if (id) {
     if (id.finalizada) {
@@ -85,8 +85,11 @@ const atualizarConsulta = async (req, res) => {
 
 //////////////////////////////////////////////////
 const excluirConsulta = async (req, res) => {
-  const { identificador } = req.query;
-  const consultaParaExcluir = procurar(identificador, consultas);
+  const { identificadorConsulta } = req.query;
+  const consultaParaExcluir = procurar(
+    identificadorConsulta,
+    consultas.identificadorConsulta
+  );
 
   if (consultaParaExcluir) {
     if (consultaParaExcluir.finalizada === false) {
@@ -120,7 +123,10 @@ const finalizarConsulta = async (req, res) => {
     return res.status(400).json({ mensagem: "Dados obrigatórios faltando" });
   }
 
-  const consultaEncontrada = procurar(identificadorConsulta, consultas);
+  const consultaEncontrada = procurar(
+    identificadorConsulta,
+    consultas.identificadorConsulta
+  );
   if (!consultaEncontrada) {
     return res.status(400).json({ mensagem: "Consulta não encontrada" });
   }
@@ -149,7 +155,7 @@ const finalizarConsulta = async (req, res) => {
   }
 
   const consulta_Finalizada = {
-    identificador: consultasFinalizadas.length + 1,
+    identificadorConsulta: consultasFinalizadas.length + 1,
     tipoConsulta: consultaEncontrada.tipoConsulta,
     valorConsulta: consultaEncontrada.valorConsulta,
     identificadorMedico: medicoEspecializado.identificador,
