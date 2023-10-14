@@ -3,7 +3,7 @@ const procurar = require("./procurar");
 
 const LogPaciente = (req) => {
   console.log("logPaciente/1");
-  const { nome, cpf, dataNascimento, celular, email, senha } = req;
+  const { nome, cpf, dataNascimento, celular, email, senha } = req.body;
 
   if (nome && cpf && dataNascimento && celular && email && senha) {
     const paciente = req.body;
