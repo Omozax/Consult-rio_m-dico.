@@ -11,7 +11,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "ojo": "nodemon ./src/index.js"
+    "ojo": "nodemon --inspect ./src/index.js"
   },
   "keywords": [],
   "author": "",

@@ -6,8 +6,9 @@ const {
   excluirConsulta,
   finalizarConsulta,
 } = require("./controladores/movimentar");
+const { listarConsultas } = require("./controladores/listar");
 
-//rotas.get("/consultas", listarConsultas);
+rotas.get("/consultas", listarConsultas);
 rotas.post("/consultas", criarConsulta);
 rotas.put("/consultas/:identificadorConsulta", atualizarConsulta);
 rotas.delete("/consultas/:identificadorConsulta", excluirConsulta);

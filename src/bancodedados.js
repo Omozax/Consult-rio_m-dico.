@@ -13,11 +13,29 @@ module.exports = {
       {
         identificador: 2,
         nome: "Irineu",
-        especialidade: "ODONTOLOGIA"
+        especialidade: "ODONTOLOGIA",
       },
-    ]
+    ],
   },
-  consultas: [],
+  consultas: [
+    {
+      identificadorConsulta: 1,
+      tipoConsulta: "GERAL",
+      valorConsulta: 150,
+      identificadorMedico: 1,
+      paciente: {
+        nome: "lyssa",
+        cpf: "098765445678",
+        dataNascimento: "19/02/1997",
+        celular: "1234321567",
+        email: "lyssa@gmail.com",
+        senha: "kjhgfdfgh",
+        tipoConsulta: "GERAL",
+        valorConsulta: 150,
+      },
+      finalizada: false,
+    },
+  ],
   consultasFinalizadas: [],
-  laudos: []
-}
+  laudos: [],
+};

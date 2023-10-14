@@ -15,58 +15,68 @@ const criarConsulta = async (req, res) => {
   const { tipoConsulta, valorConsulta, cpf } = req.body;
   const paciente = LogPaciente(req.body);
 
-  if (tipoConsulta && valorConsulta && typeof valorConsulta === "number") {
-    console.log("criarconta/1");
-    const medicoDisponivel = procurar(
-      tipoConsulta,
-      consultorio.medicos,
-      "especialidade"
-    );
-
-    if (medicoDisponivel) {
-      if (
-        !consultas.find(
-          (consulta) => consulta.paciente.cpf === cpf && !consulta.finalizada
-        )
-      ) {
-        const novaConsulta = {
-          identificadorConsulta: consultas.length + 1,
-          tipoConsulta,
-          valorConsulta,
-          identificadorMedico: medicoDisponivel.identificador,
-          paciente: LogPaciente(req),
-          finalizada: false,
-        };
-        console.log(novaConsulta);
-        consultas.push(novaConsulta);
-
-        return res
-          .status(201)
-          .json({ mensagem: "Consulta criada com sucesso" });
-      } else {
-        return res.status(400).json({
-          mensagem: "Já existe uma consulta em andamento com o CPF informado!",
-        });
-      }
-    } else {
-      return res.status(400).json({
-        mensagem:
-          "Não há médico com a especialidade necessária para a consulta.",
-      });
-    }
-  } else {
+  if (
+    !tipoConsulta ||
+    !valorConsulta ||
+    typeof valorConsulta !== "number" ||
+    paciente === null
+  ) {
     return res.status(400).json({ mensagem: "Dados de consulta inválidos" });
+  }
+
+  console.log("criarconta/1");
+  const medicoDisponivel = procurar(
+    tipoConsulta,
+    consultorio.medicos,
+    "especialidade"
+  );
+
+  const cpfDuplicado = consultas.some(
+    (consulta) =>
+      consulta.paciente && consulta.paciente.cpf === cpf && !consulta.finalizada
+  );
+
+  if (!medicoDisponivel) {
+    return res.status(400).json({
+      mensagem: "Não há médico com a especialidade necessária para a consulta.",
+    });
+  } else if (cpfDuplicado) {
+    return res.status(400).json({
+      mensagem: "Já existe uma consulta em andamento com o CPF informado!",
+    });
+  } else {
+    const novaConsulta = {
+      identificadorConsulta: consultas.length + 1,
+      tipoConsulta,
+      valorConsulta,
+      identificadorMedico: medicoDisponivel.identificador,
+      paciente,
+      finalizada: false,
+    };
+    console.log(novaConsulta);
+    consultas.push(novaConsulta);
+
+    return res.status(201).json({ mensagem: "Consulta criada com sucesso" });
   }
   console.log("controlador/criarconta2");
 };
 
 //////////////////////////////////////////////////
 const atualizarConsulta = async (req, res) => {
-  const { identificadorConsulta } = req.query;
-  const id = procurar(identificadorConsulta, consultas.identificadorConsulta);
+  const { identificadorConsulta } = req.params;
+  console.log("atualiza/0", identificadorConsulta, "req: ", req.body); ////////
+  const consulta = procurar(
+    identificadorConsulta,
+    consultas,
+    "identificadorConsulta",
+    true
+  );
 
-  if (id) {
-    if (id.finalizada) {
+  console.log("atualiza/1", identificadorConsulta, consulta);
+
+  if (consulta !== null) {
+    if (consulta.finalizada === true) {
+      console.log("atualiza/2", consulta); ///////////
       return res.status(400).json({
         mensagem: "A consulta está finalizada e não pode ser atualizada.",
       });
@@ -75,18 +85,20 @@ const atualizarConsulta = async (req, res) => {
     const pacienteAtualizado = LogPaciente(req.body);
 
     if (pacienteAtualizado === null) {
+      console.log("atualiza/3", pacienteAtualizado);
       return res.status(400).json({
         mensagem: "Campos obrigatórios faltando no corpo da requisição.",
       });
     }
 
+    // Atualize os campos da consulta com base nos dados do paciente atualizado
     for (const campo in pacienteAtualizado) {
       if (pacienteAtualizado[campo]) {
-        id.paciente[campo] = pacienteAtualizado[campo];
+        consulta.paciente[campo] = pacienteAtualizado[campo];
       }
     }
 
-    return res.status(204);
+    return res.status(204).send(); // 204 significa "No Content" para uma atualização bem-sucedida.
   } else {
     return res.status(404).json({ mensagem: "Consulta não encontrada." });
   }
