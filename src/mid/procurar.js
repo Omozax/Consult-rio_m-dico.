@@ -4,37 +4,17 @@ function procurar(
   propriedade,
   retornarIndice = false
 ) {
-  if (!Array.isArray(elementos)) {
-    elementos = [elementos];
-  }
-  console.log(propriedade);
-  for (const chave in bancoDeDados) {
-    if (!propriedade) {
-      console.log("prop", elementos.includes(bancoDeDados[chave]));
-      console.log("prop", bancoDeDados);
+  for (let chave in bancoDeDados) {
+    const dado = bancoDeDados[chave];
 
-      console.log("prop", chave);
+    if (!dado) continue;
 
-      console.log("prop", elementos);
-
-      if (elementos.includes(bancoDeDados[chave])) {
-        return retornarIndice ? chave : bancoDeDados[chave];
+    if (propriedade && dado[propriedade]) {
+      if (elementos.includes(dado[propriedade].toString())) {
+        return retornarIndice ? chave : dado;
       }
-    } else if (
-      elementos.includes(bancoDeDados[chave][propriedade].toString())
-    ) {
-      console.log("here");
-      return retornarIndice ? chave : bancoDeDados[chave];
-    } else if (typeof bancoDeDados[chave] === "object") {
-      const resultado = procurar(
-        elementos,
-        bancoDeDados[chave],
-        propriedade,
-        retornarIndice
-      );
-      if (resultado) {
-        return resultado;
-      }
+    } else if (elementos.includes(dado)) {
+      return retornarIndice ? chave : dado;
     }
   }
   return null;

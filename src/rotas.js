@@ -1,18 +1,19 @@
 const express = require("express");
 const rotas = express.Router();
 const {
-  criarConsulta,
-  atualizarConsulta,
-  excluirConsulta,
-  finalizarConsulta,
-} = require("./controladores/movimentar");
-const { listarConsultas } = require("./controladores/listar");
+  atualizar,
+  criar,
+  excluir,
+  finalizar,
+  //listar,
+} = require("./controladores");
+const { paciente } = require("./mid");
 
-rotas.get("/consultas", listarConsultas);
-rotas.post("/consultas", criarConsulta);
-rotas.put("/consultas/:identificadorConsulta", atualizarConsulta);
-rotas.delete("/consultas/:identificadorConsulta", excluirConsulta);
-rotas.post("/consultas/finalizar", finalizarConsulta);
+rotas.post("/consultas", paciente, criar);
+rotas.put("/consultas/:identificadorConsulta", paciente, atualizar);
+rotas.delete("/consultas/:identificadorConsulta", excluir);
+rotas.post("/consultas/finalizar", finalizar);
+//rotas.get("/consultas", listar);
 //rotas.get("/laudos", listarLaudoConsulta);
 //rotas.get("/consultas/medico", listarConsultasMedico);
 
