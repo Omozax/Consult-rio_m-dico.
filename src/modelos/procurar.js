@@ -4,6 +4,10 @@ function procurar(
   propriedade,
   retornarIndice = false
 ) {
+  if (!Array.isArray(elementos)) {
+    elementos = [elementos]; // Transforma em um array se não for um array
+  }
+
   for (let chave in bancoDeDados) {
     const dado = bancoDeDados[chave];
 

@@ -1,5 +1,5 @@
 const { consultas } = require("../bancodedados");
-const procurar = require("./procurar");
+const procurar = require("../modelos/procurar");
 
 const validarConsulta = (req, res, next) => {
   const { identificadorConsulta } = req.params;

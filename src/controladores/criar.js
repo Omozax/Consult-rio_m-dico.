@@ -1,36 +1,29 @@
 const {
   consultas,
   consultasFinalizadas,
-  laudos,
   consultorio,
 } = require("../bancodedados");
-const { procurar } = require("../mid");
+const procurar = require("../modelos/index");
 
 const criarConsulta = async (req, res) => {
-  const { tipoConsulta, valorConsulta } = req.body;
+  const { tipoConsulta, valorConsulta, paciente } = req.body;
 
   if (!tipoConsulta || !valorConsulta || typeof valorConsulta !== "number") {
-    return res.status(400).json({ mensagem: "Dados de consulta faltando" });
+    return res
+      .status(400)
+      .json({ mensagem: "Dados de consulta faltando ou inválidos." });
   }
 
+  // Verificar se o tipo da consulta existe nas especialidades dos médicos
   const medicoDisponivel = procurar(
     tipoConsulta,
     consultorio.medicos,
     "especialidade"
   );
-
   if (!medicoDisponivel) {
     return res.status(400).json({
       mensagem: "Não há médico com a especialidade necessária para a consulta.",
     });
-  }
-
-  const paciente = req.paciente;
-
-  if (!paciente) {
-    return res
-      .status(400)
-      .json({ mensagem: "Paciente não encontrado na requisição." });
   }
 
   const novaConsulta = {
