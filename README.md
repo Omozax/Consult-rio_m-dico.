@@ -1,545 +1,127 @@
-![](https://i.imgur.com/xG74tOh.png)
+# API de Consultório Médico - Desafio Alternativo Módulo 2
 
-# Desafio Alternativo Módulo 2 - Back-end
+Neste projeto, desenvolvi uma API RESTful para um Consultório Médico como parte de um desafio para a escola **CUBOS**. O objetivo era criar um MVP (Produto Viável Mínimo) para listar, criar, atualizar, excluir, finalizar consultas médicas e listar laudos de consultas. Os dados são armazenados em memória no arquivo `bancodedados.js`.
 
-Você acabou de ser contratado pela melhor empresa de tecnologia do mundo: a **CUBOS**.
-Sua primeira tarefa como programador é criar uma api para um Consultório Médico. Esse será um pojeto **MVP** (Produto Viável Mínimo), ou seja, em um futuro próximo outras funcionalidade surgirão para agragar ainda mais ao projeto, sendo assim os dados do banco (nomePaciente, consultório, etc.) serão imutáveis (estáticos).
+## Método `procurar` - Visão Geral
 
-Seu papel enquanto desenvolvedor será construir uma RESTful API que permita:
+Para auxiliar no desenvolvimento desta API, criei um método chamado `procurar`, que tem como objetivo facilitar a busca de elementos em um banco de dados. O método aceita diversos tipos de elementos e oferece flexibilidade nas buscas.
 
-- Listar consultas médicas
-- Criar consulta médica
-- Atualizar os dados de uma consulta médica
-- Excluir uma consulta médica
-- Finalizar uma consulta médica
-- Listar o laudo de uma consulta
-- Listar as consultas que um médico atendeu
+### Função `procurar`
 
-**Importante: Sempre que a validação de uma requisição falhar, responda com código de erro e mensagem adequada à situação, ok?**
-
-**Exemplo**
+Aqui está o código do método `procurar`:
 
 ```javascript
-// Quando é informado que uma consulta não existe:
-// HTTP Status
-{
-  "mensagem": "Consulta inexistente!"
-}
-```
-
-## Persistências dos dados
-
-Os dados serão persistidos em memória, no objeto existente dentro do arquivo `bancodedados.js`. **Todas as informações e consultas médicas deverão ser inseridas dentro deste objeto, seguindo a estrutura que já existe.**
-
-### Estrutura do objeto no arquivo `bancodedados.js`
-
-```javascript
-{
-  consultorio: {
-    nome: "Cubos Healthcare",
-    identificador: 1,
-    cnes: "1001",
-    senha: "CubosHealth@2022",
-    medicos: [
-      {
-        identificador: 1,
-        nome: "Bill",
-        especialidade: "GERAL",
-      },
-      {
-        identificador: 2,
-        nome: "Irineu",
-        especialidade: "ODONTOLOGIA"
-      },
-    ]
-  },
-  consultas: [
-    // array de consultas médicas
-  ],
-  consultasFinalizadas: [
-    // array de consultas finalizadas
-  ],
-  laudos: [
-    // array de laudos médicos
-  ]
-}
-```
-
-## Requisitos obrigatórios
-
-- Sua API deve seguir o padrão REST
-- Seu código deve estar organizado, delimitando as responsabilidades de cada arquivo adequadamente. Ou seja, é esperado que ele tenha, no mínimo a seguinte estrutura:
-  - src/
-    - controladores/
-      - **_seus controladores vão aqui_**
-    - bancodedados.js
-    - rotas.js
-    - index.js
-- Qualquer valor (dinheiro) deverá ser representado em centavos (Ex.: R$ 10,00 reais = 1000).
-- Evite códigos duplicados. Antes de copiar e colar, pense se não faz sentido esse pedaço de código estar centralizado numa função.
-- Quando o enunciado do end-point frizar o armazenamento em memória, o mesmo esta se referindo ao arquivo **_bancodedados.js_**, ou seja, a persistência deve ser feita no arquivo **_bancodedados.js_**.
-
-## Status Code
-
-Abaixo, listamos os possíveis **_status code_** esperados como resposta da API.
-
-(Obs.): A lista abaixo são exemplos que **_podem_** ou **_não_** ser utilizados no projeto, ou seja, não se faz necessário o uso de todos.
-
-```javascript
-// 200 (OK) = requisição bem sucedida
-// 201 (Created) = requisição bem sucedida e algo foi criado
-// 204 (No Content) = requisição bem sucedida, sem conteúdo no corpo da resposta
-// 400 (Bad Request) = o servidor não entendeu a requisição pois está com uma sintaxe/formato inválido
-// 401 (Unauthorized) = o usuário não está autenticado (logado)
-// 403 (Forbidden) = o usuário não tem permissão de acessar o recurso solicitado
-// 404 (Not Found) = o servidor não pode encontrar o recurso solicitado
-// 500 (Internal Server Error) = falhas causadas pelo servidor
-```
-
-## Endpoints
-
-### Listar consultas médicas
-
-#### `GET` `/consultas?cnes_consultorio=1001&senha_consultorio=CubosHealth@2022`
-
-Esse end-point deverá listar todas as consultas médicas.
-
-- Você deverá, **OBRIGATORIAMENTE**:
-
-  - Verificar se o cnes e a senha do consultório foram informados (passado como query params na url).
-  - Validar se o cnes a senha do consultório estão corretos.
-
-- **Requisição** - query params (Siga o padrão de nomenclatura)
-
-  - cnes_consultorio
-  - senha_consultorio
-
-- **Resposta**
-  - Listagem de todas as consultas.
-
-#### Exemplo de resposta
-
-```javascript
-// HTTP Status 200 - Success
-// 3 consultas encontradas
-[
-  {
-    identificador: 1,
-    tipoConsulta: "GERAL",
-    identificadorMedico: 1,
-    finalizada: true,
-    valorConsulta: 3000,
-    paciente: {
-      nome: "John Doe",
-      cpf: "55132392051",
-      dataNascimento: "2022-02-02",
-      celular: "11999997777",
-      email: "john@doe.com",
-      senha: "1234",
-    },
-  },
-  {
-    identificador: 3,
-    tipoConsulta: "ODONTOLOGIA",
-    identificadorMedico: 1,
-    finalizada: false,
-    valorConsulta: 5000,
-    paciente: {
-      nome: "John Doe 3",
-      cpf: "55132392053",
-      dataNascimento: "2022-02-02",
-      celular: "11999997777",
-      email: "john@doe3.com",
-      senha: "1234",
-    },
-  },
-];
-```
-
-```javascript
-// Nenhuma consulta encontrada
-// HTTP Status 204 - No Content
-```
-
-```javascript
-// Senha do consultorio errada
-// HTTP Status 401 - Unauthorized
-{
-  "mensagem": "Cnes ou senha inválidos!"
-}
-```
-
-### Criar consulta médica
-
-#### `POST` `/consulta`
-
-Esse endpoint deverá criar uma consulta médica, onde será gerado um identificador único para identificação da consulta (identicador da consulta).
-
-- Você deverá, **OBRIGATORIAMENTE**:
-
-  - Verificar se todos os campos foram informados (todos são obrigatórios) 
-  - Verifica se o valor da consulta é numérico
-  - Verificar se o CPF informado já não está vinculado a nenhuma consulta que não foi finalizada
-  - Validar se o tipo da consulta informado consta nas especialidade dos médicos na base
-  - Vincular o identificador do médico especializado que irá atender a consulta em questão no momento de criação da consulta
-  - Definir _finalizada_ como false
-  - Criar uma consulta médica cuja o identificador é único
-
-- **Requisição** - O corpo (body) deverá possuir um objeto com as seguintes propriedades (respeitando estes nomes):
-
-  - tipoConsulta
-  - valorConsulta
-  - paciente
-    - nome
-    - cpf
-    - dataNascimento
-    - celular
-    - email
-    - senha
-
-- **Resposta**
-
-  Em caso de **sucesso**, não deveremos enviar conteúdo no corpo (body) da resposta.  
-   Em caso de **falha na validação**, a resposta deverá possuir **_status code_** apropriado, e em seu corpo (body) deverá possuir um objeto com uma propriedade **mensagem** que deverá possuir como valor um texto explicando o motivo da falha.
-
-#### Exemplo de Requisição
-
-```javascript
-// POST /consulta
-{
-  "tipoConsulta": "ODONTOLOGIA",
-  "valorConsulta": 5000,
-  "paciente": {
-    "nome": "John Doe 3",
-    "cpf": "55132392053",
-    "dataNascimento": "2022-02-02",
-    "celular": "11999997777",
-    "email": "john@doe3.com",
-    "senha": "1234"
+function procurar(
+  elementos,
+  bancoDeDados,
+  propriedade,
+  retornarIndice = false
+) {
+  if (!Array.isArray(elementos)) {
+    elementos = [elementos]; // Transforma em um array se não for um array
   }
-}
-```
 
-#### Exemplo de Resposta
+  for (let chave in bancoDeDados) {
+    const dado = bancoDeDados[chave];
 
-```javascript
-// HTTP Status 204 - No Content
-// Sem conteúdo no corpo (body) da resposta
-```
+    if (!dado) continue;
 
-```javascript
-// HTTP Status 400
-{
-    "mensagem": "Já existe uma consulta em andamento com o cpf ou e-mail informado!"
-}
-```
-
-### Atualizar os dados de uma consulta médica
-
-#### `PUT` `/consulta/:identificadorConsulta/paciente`
-
-Esse endpoint deverá atualizar apenas os dados do paciente de uma consulta médica que não esteja finalizada.
-
-- Você deverá, **OBRIGATORIAMENTE**:
-
-  - Verificar se foi passado todos os campos no body da requisição
-  - Verificar se o identificador da consulta passado como parametro na URL é válido
-  - Se o CPF for informado, verificar se já existe outro registro com o mesmo CPF
-  - Se o E-mail for informado, verificar se já existe outro registro com o mesmo E-mail
-  - Verifica se a consulta não esta finalizada
-  - Atualizar os dados do usuário de uma consulta médica
-
-- **Requisição** - O corpo (body) deverá possuir um objeto com todas as seguintes propriedades (respeitando estes nomes):
-
-  - nome
-  - cpf
-  - dataNascimento
-  - celular
-  - email
-  - senha
-
-- **Resposta**
-
-  Em caso de **sucesso**, não deveremos enviar conteúdo no corpo (body) da resposta.
-  Em caso de **falha na validação**, a resposta deverá possuir **_status code_** apropriado, e em seu corpo (body) deverá possuir um objeto com uma propriedade **mensagem** que deverá possuir como valor um texto explicando o motivo da falha.
-
-#### Exemplo de Requisição
-
-```javascript
-// PUT /consulta/:identificadorConsulta/paciente
-{
-  "nome": "John Doe",
-  "cpf": "55132392051",
-  "dataNascimento": "2022-02-02",
-  "celular": "11999997777",
-  "email": "john@doe.com",
-  "senha": "1234"
-}
-```
-
-#### Exemplo de Resposta
-
-```javascript
-// HTTP Status 204 - No Content
-// Sem conteúdo no corpo (body) da resposta
-```
-
-```javascript
-// HTTP Status 400
-{
-    "mensagem": "Cpf já consta na base!"
-}
-```
-
-### Excluir uma consulta médica
-
-#### `DELETE` `/consulta/:identificadorConsulta`
-
-Esse endpoint deve excluir uma consulta médica existente, esta consulta não pode estar _finalizada_.
-
-- Você deverá, **OBRIGATORIAMENTE**:
-
-  - Verificar se o identificador da consulta médica passado como parametro na URL é válido
-  - Permitir excluir uma consulta apenas se _finalizada_ for igual a false
-  - Remover a consulta do objeto de persistência de dados
-
-- **Requisição**
-
-  - Identificador da consulta (passado como parâmetro na rota)
-
-- **Resposta**
-
-  Em caso de **sucesso**, não deveremos enviar conteúdo no corpo (body) da resposta.  
-  Em caso de **falha na validação**, a resposta deverá possuir **_status code_** apropriado, e em seu corpo (body) deverá possuir um objeto com uma propriedade **mensagem** que deverá possuir como valor um texto explicando o motivo da falha.
-
-#### Exemplo de Resposta
-
-```javascript
-// HTTP Status 204 - No Content
-// Sem conteúdo no corpo (body) da resposta
-```
-
-```javascript
-// HTTP Status 400
-{
-  "mensagem": "A consulta só pode ser removida se a mesma não estiver finalizada"
-}
-```
-
-### Finalizar uma consulta médica
-
-#### `POST` `/consulta/finalizar`
-
-Esse endpoint deverá finalizar uma consulta com um texto de laudo válido do médico e registrar esse laudo e essa consulta finalizada.
-
-- Você deverá, **OBRIGATORIAMENTE**:
-
-  - Verificar se foi passado todos os campos no body da requisição
-  - Verificar se o identificador da consulta existe
-  - Verificar se a consulta já esta finalizada
-  - Verificar se o texto do médico possui um tamanho > 0 e <= 200 carácteres
-  - Armazenar as informações do laudo na persistência de dados
-  - Armazenar a consulta médica finalizada na persistência de dados
-
-- **Requisição** - O corpo (body) deverá possuir um objeto com as seguintes propriedades (respeitando estes nomes):
-
-  - identificadorConsulta
-  - textoMedico
-
-- **Resposta**
-
-  Em caso de **sucesso**, não deveremos enviar conteúdo no corpo (body) da resposta.  
-  Em caso de **falha na validação**, a resposta deverá possuir **_status code_** apropriado, e em seu corpo (body) deverá possuir um objeto com uma propriedade **mensagem** que deverá possuir como valor um texto explicando o motivo da falha.
-
-#### Exemplo de Requisição
-
-```javascript
-// POST /consulta/finalizar
-{
-	"identificadorConsulta": 1,
-	"textoMedico": "XPTO"
-}
-```
-
-#### Exemplo de Resposta
-
-```javascript
-// HTTP Status 204 - No Content
-// Sem conteúdo no corpo (body) da resposta
-```
-
-```javascript
-// HTTP Status 400
-{
-    "mensagem": "O tamanho do textoMedico não está dentro do esperado"
-}
-```
-
-#### Exemplo do registro de uma consulta médica finalizada
-
-```javascript
-{
-  "identificador": 1,
-  "tipoConsulta": "GERAL",
-  "identificadorMedico": 1,
-  "finalizada": true,
-  "identificadorLaudo": 1,
-  "valorConsulta": 3000,
-  "paciente": {
-    "nome": "John Doe",
-    "cpf": "55132392051",
-    "dataNascimento": "2022-02-02",
-    "celular": "11999997777",
-    "email": "john@doe.com",
-    "senha": "1234"
-   }
-}
-```
-
-#### Exemplo do registro de um laudo
-
-```javascript
-{
-  "identificador": 1,
-  "identificadorConsulta": 3,
-  "identificadorMedico": 2,
-  "textoMedico": "XPTO",
-  "paciente": {
-     "nome": "John Doe",
-     "cpf": "55132392051",
-     "dataNascimento": "2022-02-02",
-     "celular": "11999997777",
-     "email": "john@doe.com",
-     "senha": "1234"
+    if (propriedade && dado[propriedade]) {
+      if (elementos.includes(dado[propriedade].toString())) {
+        return retornarIndice ? chave : dado;
+      }
+    } else if (elementos.includes(dado)) {
+      return retornarIndice ? chave : dado;
+    }
   }
+  return null;
 }
 ```
 
-### Listar o laudo de uma consulta
+### O que ela faz
 
-#### `GET` `/consulta/laudo?identificador_consulta=1&senha=1234`
+O método `procurar` permite pesquisar elementos em um banco de dados com base em um conjunto de elementos, propriedades e critérios. Ele verifica se os elementos são encontrados nas propriedades dos dados no banco de dados e retorna o primeiro resultado correspondente. Isso é útil para pesquisas flexíveis em diversas situações.
 
-Esse endpoint deverá retornar informações do laudo de uma consulta junto as informações adicionais das entidades relacionadas aquele laudo.
+### Exemplos de Uso
 
-- Você deverá, **OBRIGATORIAMENTE**:
+Aqui estão alguns exemplos de uso do método `procurar` com diferentes tipos de elementos:
 
-  - Verificar se o identificador da consulta e a senha foram informados (passado como query params na url)
-  - Verificar se a consulta médica informada existe
-  - Verificar se a senha informada é uma senha válida
-  - Verificar se existe um laudo para consulta informada
-  - Exibir o laudo da consulta médica em questão junto as informações adicionais
-
-- **Requisição** - query params
-
-  - identificador_consulta
-  - senha
-
-- **Resposta**
-
-  - Informações do laudo e das entidades relacionadas
-
-#### Exemplo de Resposta
+#### Exemplo com Strings:
 
 ```javascript
-// HTTP Status 200 - Success
-{
-  "identificador":1,
-  "identificadorConsulta": 3,
-  "identificadorMedico": 2,
-  "textoMedico": "XPTO",
-  "paciente": {
-    "nome": "John Doe",
-    "cpf": "55132392051",
-    "dataNascimento": "2022-02-02",
-    "celular": "11999997777",
-    "email": "john@doe.com",
-    "senha": "1234"
-  }
-}
+const dados = {
+  1: { nome: "Alice" },
+  2: { nome: "Bob" },
+  3: { nome: "Charlie" },
+};
+
+const resultado = procurar("Alice", dados, "nome");
+// Resultado: { nome: "Alice" }
 ```
+
+#### Exemplo com Números:
 
 ```javascript
-// HTTP Status 400 / 401 / 403 / 404
-{
-  "mensagem": "Consulta médica não encontrada!"
-}
+const dados = {
+  1: { idade: 25 },
+  2: { idade: 30 },
+  3: { idade: 35 },
+};
+
+const resultado = procurar(30, dados, "idade");
+// Resultado: { idade: 30 }
 ```
 
-### Listar as consultas que um médico atendeu
-
-#### `GET` `/consultas/medico?identificador_medico=1`
-
-Esse endpoint deverá retornar todas as consultas que um profissional **_atendeu_**, ou seja, finalizadas.
-
-- Você deverá, **OBRIGATORIAMENTE**:
-
-  - Verificar se o identificador do medico foi informado (passado como query params na url)
-  - Verificar se o médico existe
-  - Exibir as consultas vinculadas ao médico
-
-- **Requisição** - query params
-
-  - identificador_medico
-
-- **Resposta**
-
-  - Listagem das consultas vinculadas ao médico
-
-#### Exemplo de Resposta
+#### Exemplo com Arrays:
 
 ```javascript
-// HTTP Status 200 - Success
-[
-  {
-    identificador: 1,
-    tipoConsulta: "GERAL",
-    identificadorMedico: 1,
-    finalizada: true,
-    identificadorLaudo: 1,
-    valorConsulta: 3000,
-    paciente: {
-      nome: "John Doe",
-      cpf: "55132392051",
-      dataNascimento: "2022-02-02",
-      celular: "11999997777",
-      email: "john@doe.com",
-      senha: "1234",
-    },
-  },
-  {
-    identificador: 3,
-    tipoConsulta: "GERAL",
-    identificadorMedico: 1,
-    finalizada: true,
-    identificadorLaudo: 1,
-    valorConsulta: 5000,
-    paciente: {
-      nome: "John Doe 3",
-      cpf: "55132392053",
-      dataNascimento: "2022-02-02",
-      celular: "11999997777",
-      email: "john@doe3.com",
-      senha: "1234",
-    },
-  },
-];
+const dados = {
+  1: { cores: ["vermelho", "azul"] },
+  2: { cores: ["verde", "amarelo"] },
+  3: { cores: ["vermelho", "verde"] },
+};
+
+const resultado = procurar(["vermelho", "azul"], dados, "cores");
+// Resultado: { cores: ["vermelho", "azul"] }
 ```
+
+#### Exemplo com Objetos:
 
 ```javascript
-// HTTP Status 400 / 401 / 403 / 404
-{
-  "mensagem": "O médico informado não existe na base!"
-}
+const dados = {
+  1: { produto: { nome: "Laptop", preco: 1000 } },
+  2: { produto: { nome: "Smartphone", preco: 500 } },
+  3: { produto: { nome: "Tablet", preco: 300 } },
+};
+
+const resultado = procurar({ nome: "Smartphone", preco: 500 }, dados, "produto");
+// Resultado: { produto: { nome: "Smartphone", preco: 500 } }
 ```
 
-## Aulas úteis:
+Espero que esse método seja útil para programadores que desejam realizar pesquisas flexíveis em seus bancos de dados.
 
-- [Rotas, Intermediários e Controladores](https://aulas.cubos.academy/turma/c6635882-58d1-4c92-9908-f93813988b73/aulas/93a577ce-c5b3-4795-add2-d21e060d20e1)
-- [Aula API REST](https://aulas.cubos.academy/turma/c6635882-58d1-4c92-9908-f93813988b73/aulas/ec754df8-843c-4018-a9ed-bc65e424c3b2)
-- [Formatando datas com date-fns](https://aulas.cubos.academy/turma/c6635882-58d1-4c92-9908-f93813988b73/aulas/c491c422-e1ec-4e2e-b463-e7388b329a5a)
-- [Aula de objetos](https://aulas.cubos.academy/turma/c6635882-58d1-4c92-9908-f93813988b73/aulas/c2ca98f2-cff8-42c3-987b-f52181ed8c66)
-- [Aula de funções](https://aulas.cubos.academy/turma/c6635882-58d1-4c92-9908-f93813988b73/aulas/8add9839-5365-4e3c-8ec8-3d464155de91)
+![Cubos Healthcare](https://i.imgur.com/xG74tOh.png)
 
-**LEMBRE-SE**: Feito é melhor do que perfeito, mas não faça mal feito!!!
+## Desafio - Consultório Médico
 
-###### tags: `back-end` `módulo 2` `nodeJS` `API REST` `desafio-alternativo`
+Este é o desafio alternativo do Módulo 2 - Back-end da **CUBOS**. Fui contratado para desenvolver uma API para um Consultório Médico como um MVP (Produto Viável Mínimo). A API permite listar, criar, atualizar, excluir, finalizar consultas médicas e listar laudos. Os dados são mantidos em memória.
+
+### Endpoints
+
+Aqui estão os principais endpoints da API:
+
+- **Listar Consultas Médicas**: `GET /consultas`
+- **Criar Consulta Médica**: `POST /consulta`
+- **Atualizar Dados da Consulta**: `PUT /consulta/:identificadorConsulta/paciente`
+- **Excluir Consulta Médica**: `DELETE /consulta/:identificadorConsulta`
+- **Finalizar Consulta Médica**: `POST /consulta/finalizar`
+- **Listar Laudo de Consulta**: `GET /consulta/laudo`
+- **Listar Consultas de um Médico**: `GET /consultas/medico`
+
+Cada endpoint possui suas regras e validações específicas, como verificação de senhas, validações de dados e controle de status de consulta. A API é projetada para lidar com consultas médicas, pacientes e médicos, com a capacidade de listar consultas finalizadas e gerar laudos.
+
+Este desafio é uma oportunidade de aplicar conceitos de desenvolvimento back-end, roteamento, persistência de dados em memória e validação de entrada em um ambiente prático.
+
+**Lembre-se**: a implementação deve ser organizada e bem documentada, seguindo os padrões REST e as regras definidas para cada endpoint.
+
+Concluindo, este projeto apresenta a base de uma API de Consultório Médico, que pode ser aprimorada com funcionalidades adicionais no futuro. É uma demonstração do conhecimento em desenvolvimento back-end em JavaScript/Node.js.
