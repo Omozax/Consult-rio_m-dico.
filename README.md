@@ -1,6 +1,9 @@
-# API de Consultório Médico - Desafio Alternativo Módulo 2
+# API de Consultório Médico 
 
-Neste projeto, desenvolvi uma API RESTful para um Consultório Médico como parte de um desafio para a escola **CUBOS**. O objetivo era criar um MVP (Produto Viável Mínimo) para listar, criar, atualizar, excluir, finalizar consultas médicas e listar laudos de consultas. Os dados são armazenados em memória no arquivo `bancodedados.js`.
+
+  Neste projeto, desenvolvi uma API RESTful para um Consultório Médico como parte de um desafio para a escola **CUBOS**. O objetivo era criar um MVP (Produto Viável Mínimo) para listar, criar, atualizar, excluir, finalizar consultas médicas e listar laudos de consultas. Os dados são armazenados em memória no arquivo `bancodedados.js`.
+
+---
 
 ### Endpoints
 
@@ -14,13 +17,18 @@ Aqui estão os principais endpoints da API:
 - **Listar Laudo de Consulta**: `GET /consulta/laudo`
 - **Listar Consultas de um Médico**: `GET /consultas/medico`
 
+---
+
 Cada endpoint possui suas regras e validações específicas, como verificação de senhas, validações de dados e controle de status de consulta. 
 
-![Exemplo de solicitação no Insomnia](https://i.imgur.com/exemplodeinsomnia.png)
+
+![Exemplo de solicitação no Insomnia](https://github.com/Omozax/Consult-rio_m-dico./blob/main/Capture.PNG)
 
 Para facilitar o uso da API, você também pode utilizar ferramentas como o [Insomnia](https://insomnia.rest/) ou [Postman](https://www.postman.com/) para fazer solicitações e testar as funcionalidades.
 
 Lembre-se de seguir as melhores práticas de autenticação, validação de entrada e segurança ao usar esta API em seus projetos.
+
+---
 
 ## Método `procurar` - Visão Geral
 
