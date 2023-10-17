@@ -133,5 +133,14 @@ Espero que esse método seja útil para programadores que desejam realizar pesqu
 
 
 
+---
+<div align="center">
+
+[EN](https://github.com/Omozax/Consult-rio_m-dico./blob/main/README-EN.md)
+
+</div>
+
+
+
 
 
