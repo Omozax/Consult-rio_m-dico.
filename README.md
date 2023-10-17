@@ -28,6 +28,9 @@ Para facilitar o uso da API, você também pode utilizar ferramentas como o [Ins
 
 Lembre-se de seguir as melhores práticas de autenticação, validação de entrada e segurança ao usar esta API em seus projetos.
 
+Para aqueles que desejam verificar os endpoints da API, você pode encontrar o documento exportado com uma URL neste [link](https://github.com/Omozax/Consult-rio_m-dico./blob/main/Insomnia_2023-10-16.json).
+
+
 ---
 
 ## Método `procurar` - Visão Geral
